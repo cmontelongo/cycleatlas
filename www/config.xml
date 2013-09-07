@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="info.msystems.cycleatlas" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
-    <name>Cycle Atlas</name>
+<widget id="info.msystems.maps-2" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+    <name>Maps2 Project</name>
     <description>
-        Australia's best Cycling Routes.
+        Hello World sample application that responds to the deviceready event.
     </description>
-    <author email="info@cycleatlas.com" href="http://cycleatlas.com">
-        Cycle Atlas Team
+    <author email="support@phonegap.com" href="http://phonegap.com">
+        PhoneGap Team
     </author>
     <feature name="http://api.phonegap.com/1.0/device" />
     <preference name="permissions" value="none" />
@@ -48,11 +48,4 @@
     <gap:splash gap:platform="ios" height="768" src="res/screen/ios/screen-ipad-landscape.png" width="1024" />
     <gap:splash gap:platform="winphone" src="res/screen/windows-phone/screen-portrait.jpg" />
     <access origin="http://127.0.0.1*" />
-    <access origin="*.googleapis.com" />
-    <access origin="*.google.com" />
-    <access origin="*.gstatic.com" />
-    <access origin="*.msystems.info" />
-    <access origin="*" />
-    <feature name="http://api.phonegap.com/1.0/geolocation"/>
-    <plugin name="Geolocation" value="org.apache.cordova.GeoBroker" />
 </widget>

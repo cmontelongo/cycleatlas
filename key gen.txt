@@ -1,0 +1,19 @@
+keytool -genkey -keysize 2048 -keypass olaatodos -validity 10000 -alias cycleatlas -keyalg RSA -keystore cycleatlas.keystore
+
+
+Escriba la contrase?a del almac?n de claves:  olaatodos
+Volver a escribir la contrase?a nueva: olaatodos
+?Cu?les son su nombre y su apellido?
+  [Unknown]:  Carlos Montelongo
+?Cu?l es el nombre de su unidad de organizaci?n?
+  [Unknown]:  Cycle Atlas
+?Cu?l es el nombre de su organizaci?n?
+  [Unknown]:  Cycle Atlas
+?Cu?l es el nombre de su ciudad o localidad?
+  [Unknown]:  Melbourne
+?Cu?l es el nombre de su estado o provincia?
+  [Unknown]:  Melbourne
+?Cu?l es el c?digo de pa?s de dos letras de la unidad?
+  [Unknown]:  AU
+?Es correcto CN=Carlos Montelongo, OU=Cycle Atlas, O=Cycle Atlas, L=Melbourne, ST=Melbourne, C=AU?
+  [no]:  si
