@@ -141,26 +141,6 @@ function initialize(lat,lng) {
 }
 
 
-function onDeviceReady(){
-    //alert("Dispositivo listo. API PhoneGap");
-    //navigator.geolocation.getCurrentPosition(onSuccess, onError);
-/*    $("#test1").gmap3({
-                      map:{
-                      options:{
-                      mapTypeId : google.maps.MapTypeId.ROADMAP,
-                      center: [-37.76, 144.925],
-                      zoom: 12
-                      }
-                      },
-                      kmllayer:{
-                      options:{
-                      url: "http://cap-mobi.msystems.info/kml/melbourne_gpx_green_2.kml",
-                      preserveViewport: true
-                      }
-                      }
-                      });*/
-}
-
 function locateCurrentPosition(){
     //alert("Getting position");
     var options = {
@@ -169,57 +149,15 @@ function locateCurrentPosition(){
         enableHighAccuracy: true
     };
     navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
-    $("#popupMapOpt").popup("close");
+    //$("#popupMapOpt").popup("close");
     //alert("Getting position --> DONE");
 }
-function onSuccess(position)
-{
-    //initialize(position.coords.latitude, position.coords.longitude);
-    //init2();
-    //init3();
-    //alert("Posicion "+position.coords.latitude+", "+position.coords.longitude)
-    //            var currPosition = new google.map.LatLng(position.coords.latitude, position.coords.longitude);
-    //            $("#test1").setCenter(currPosition);
-    //            var marcador = new google.maps.Marker({
-    //                                                  position: currPosition,
-    //                                                  map: map
-    //            })
-    
-    $("#test1").gmap3({
-                      map:{
-                      options:{
-                      center:[position.coords.latitude, position.coords.longitude],
-                      zoom: 12
-                      }
-                      },
-                      marker:{
-                      values:[
-                              {latLng:[position.coords.latitude, position.coords.longitude],
-                              data:"Paris !",
-                              options:{icon: "http://cap-mobi.msystems.info/kml/imag/Black_PIn_50.png"}
-                              }
-                              ]
-                      }
-                      });
-    
-};
+
 function onError(error)
 {
     alert(
           'code: '    + error.code    + '\n' +
           'message: ' + error.message + '\n');
-}
-
-function init2(){
-    $('#map_canvas_3').gmap();
-    $('#map_canvas_3').gmap('option', 'zoom', 5);
-    $('#map_canvas_3').gmap('loadKML','indonesia71', 'http://cap.msystems.info/gpx/CyclingIndonesia_71.kml');
-}
-
-function init3(){
-    $('#map_canvas_4').gmap();
-    $('#map_canvas_4').gmap('option', 'zoom', 5);
-    $('#map_canvas_4').gmap('loadKML','indonesiaKotaBandug', 'http://cap.msystems.info/gpx/CyclingIndonesia_KotaBandung.kml');
 }
 
 var categoryData = {
@@ -265,6 +203,13 @@ var map3Data = {
         icon: "Lite_icon_50.png",
         url: "http://cap-mobi.msystems.info/kml/AlpeDHuezMap.kml",
         parentRideList: "lite"
+    },
+    li3: {
+        name: "Happy Valley Rail Trail",
+        description: "Happy Valley Rail Trail",
+        icon: "Lite_icon_50.png",
+        url: "http://cap-mobi.msystems.info/kml/AlpeDHuezMap.kml",
+        parentRideList: "lite"
     }
 };
 
@@ -297,8 +242,8 @@ name: "Lite 0 - 20 KM",
 description: "Yellow",
 icon: "Lite_icon_50.png",
 items: [ {name: "Capital City Trail", url:"#showGMap3?map=li1"},
-        {name: "Gardiners Creek Trail", url:"#showGMap3?map=li2"},
-        {name: "Happy Valley Rail Trail", url:"#showMap?map=ea3"},
+        {name: "Gardiners Creek Trail", url:"#showGMap4?map=li2"},
+        {name: "Happy Valley Rail Trail", url:"#showGMap5?map=li3"},
         {name: "Merri Creek Trail", url:"#showMap?map=ea4"},
         {name: "Port Phillip Bay Trail", url:"#showMap?map=ea5"},
         {name: "Quay to Cove", url:"#showMap?map=ea6"},
@@ -373,6 +318,8 @@ $(document).bind( "pagebeforechange", function( e, data ) {
         var u = $.mobile.path.parseUrl( data.toPage ),
             sm = /^#showMap/;
             sm3 = /^#showGMap3/;
+            sm4 = /^#showGMap4/;
+            sm5 = /^#showGMap5/;
             sr = /^#showRides/;
         if ( u.hash.search(sr) !== -1 ) {
             showRides( u, data.options );
@@ -385,6 +332,12 @@ $(document).bind( "pagebeforechange", function( e, data ) {
                 $('#test').gmap3('destroy').remove();
             }, 10);
             showMap2( u, data.options );
+            e.preventDefault();
+        } else if ( u.hash.search(sm4) !== -1 ) {
+            showMap4( u, data.options );
+            e.preventDefault();
+        } else if ( u.hash.search(sm5) !== -1 ) {
+            showMap5( u, data.options );
             e.preventDefault();
         }
     }
@@ -447,6 +400,36 @@ function showRides( urlObj, options )
 
 
 
+$(document).on('pageshow', '#showGMap3', function () {
+    var options = {
+        enableHighAccuracy: true
+    };
+    navigator.geolocation.getCurrentPosition(function(position){
+        var clientPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        $('#test1').gmap('addMarker', {'position': clientPosition, 'bounds': true});
+                                                    /*self.addShape('Circle', {
+                                                                                         'strokeWeight': 0,
+                                                                                         'fillColor': "#008595",
+                                                                                         'fillOpacity': 0.25, 
+                                                                                         'center': clientPosition, 
+                                                                                         'radius': 15, 
+                                                                                         'clickable': false 
+                                                                                         });*/
+        $('#test1').gmap({ 'center': clientPosition });
+        $('#test1').gmap('option', 'zoom', 15);
+        $('#test1').gmap('addShape', 'Circle', {
+            'strokeColor': "#FF0000",
+            'strokeOpacity': 0.8,
+            'strokeWeight': 2,
+            'fillColor': "#FF0000",
+            'fillOpacity': 0.35,
+            'center': new google.maps.LatLng(position.coords.latitude, position.coords.longitude),
+            'radius': 2000
+        });
+    }, onError, options);
+
+});
+
 function showMap2( urlObj, options )
 {
     var mapName = urlObj.hash.replace( /.*map=/, "" ),
@@ -454,65 +437,157 @@ function showMap2( urlObj, options )
     pageSelector = urlObj.hash.replace( /\?.*$/, "" );
     
     if ( mapId ) {
-/*        $("#test1").gmap3({
-            map:{
-                options:{
-                    mapTypeId : google.maps.MapTypeId.ROADMAP,
-                    center: [-37.76, 144.925],
-                    zoom: 10
-                }
-            },
-            kmllayer:{
-                options:{
-                    url: mapId.url,
-                    preserveViewport: true
-                }
-            }
-        });
-*/
-
-        $('#test1').gmap({'center': '57.7973333,12.0502107', 'zoom': 10, 'disableDefaultUI':true, 'callback': function() {
-                              var self = this;
-                              self.addMarker({'position': this.get('map').getCenter() }).click(function() {
-                                                                                               self.openInfoWindow({ 'content': 'Hello World!' }, this);
-                                                                                               });
-                              }});
-
-        $('#test1').gmap('refresh');
-
-
+        
         $("#gmapHeader1").find("a")
+        .attr("data-iconpos", "notext")
+        .attr("data-role", "button")
+        .attr("data-icon","back")
+        .attr("data-inline","true")
+        .attr("class","ui-btn-left")
+        .attr("href", "#showRides?ride="+mapId.parentRideList);
+        $("#gmapHeader1").trigger("create");
+        $("#gmapHeader2").find("a")
+        .attr("data-iconpos", "notext")
+        .attr("data-role", "button")
+        .attr("data-icon", "search")
+        .attr("data-inline" ,"true")
+        .attr("class","ui-btn-right")
+        .attr("href","javascript:locateCurrentPosition();");
+        $("#gmapHeader2").trigger("create");
+        
+        var $page = $( pageSelector ),
+        $header = $page.children( ":jqmData(role=header)" );
+        $header.find( "h1" ).html( mapId.name );
+        $page.page();
+        options.dataUrl = urlObj.href;
+        $.mobile.changePage( $page, options );
+    }
+}
+
+
+
+
+
+
+$(document).on('pageshow', '#showGMap4', function () {
+    var options = {
+        enableHighAccuracy: true
+    };
+    navigator.geolocation.getCurrentPosition(function(position){
+        var clientPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        var myOptions = {
+                center: clientPosition,
+                zoom: 10,
+                mapTypeControlOptions: {
+                    mapTypeIds: [google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.ROADMAP],
+                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+                }
+        };
+        var map_gpx = new google.maps.Map(document.getElementById('test2'), myOptions);
+    }, onError, options);
+
+});
+
+
+
+function showMap4( urlObj, options )
+{
+    var mapName = urlObj.hash.replace( /.*map=/, "" ),
+    mapId = map3Data[ mapName ],
+    pageSelector = urlObj.hash.replace( /\?.*$/, "" );
+    
+    if ( mapId ) {
+
+        $("#gmapHeader3").find("a")
             .attr("data-iconpos", "notext")
             .attr("data-role", "button")
             .attr("data-icon","back")
             .attr("data-inline","true")
             .attr("class","ui-btn-left")
             .attr("href", "#showRides?ride="+mapId.parentRideList);
-        $('#gmapHeader1').trigger('create');
-        $("#gmapHeader2").find("a")
+        $("#gmapHeader3").trigger("create");
+        $("#gmapHeader4").find("a")
             .attr("data-iconpos", "notext")
             .attr("data-role", "button")
             .attr("data-icon", "search")
             .attr("data-inline" ,"true")
             .attr("class","ui-btn-right")
             .attr("href","javascript:locateCurrentPosition();");
-        $('#gmapHeader2').trigger('create');
+        $("#gmapHeader4").trigger("create");
 
         var $page = $( pageSelector ),
         $header = $page.children( ":jqmData(role=header)" );
-//        $content = $page.children( ":jqmData(role=content)" ),
-//        markup = "<div style='padding:0 0 0 0; width:100%; height:400px; background:lightgrey' alt='Loading...'><object type='text/html' data='"+mapId.url+"' style='width:100%; height:100%;' scrolling='no'></object></div>";
-//        markup += "<a href='#showRides?ride="+mapId.parentRideList+"' data-transition='fade'><img src='img/"+mapId.icon+"' border='0' style='position:absolute; top:0px; left:10px;' width='50px' height='50px' /></a>";
-//        markup += "<img src='img/locator_32.png' onClick='locateCurrentPosition();' border='0' style='position:absolute; top:5px; left:250px;' width='32px' height='32px' />";
         $header.find( "h1" ).html( mapId.name );
-        //headerHTML = "<h1>"+mapId.name+"</h1>";
-//        headerHTML = "<a href='#showRides?ride="+mapId.parentRideList+"' class='ui-btn-left' data-role='button' data-icon='back' data-iconpos='notext' data-inline='true'>back</a>";
-//        headerHTML += "<a href='#popupMapOpt' data-rel='popup' class='ui-btn-right' data-role='button' data-inline='true' data-icon='bars' data-theme='a' data-transition='pop' data-iconpos='notext'>options</a>";
-//        headerHTML += "<div data-role='popup' id='popupMapOpt' data-theme='none'><div data-role='collapsible-set' data-theme='a' data-content-theme='a' data-collapsed-icon='arrow-r' data-expanded-icon='arrow-d' style='margin:0; width:250px;'><ul data-role='listview'><li data-icon='search' data-iconpos='notext'><a href='javascript:locateCurrentPosition();' data-iconpos='notext'><h1>Get current location</h1></a></li><li data-icon='back'><a id='hrefBack' href='#showRides?ride="+mapId.parentRideList+"'><h1>Go back</h1></a></li></ul></div></div>";
-        //$header.html(headerHTML);
-//        $header.find( "div" ).html(headerHTML);
-//        $content.html( markup );
+        $page.page();
+        options.dataUrl = urlObj.href;
+        $.mobile.changePage( $page, options );
+    }
+}
 
+
+
+
+$(document).on('pageshow', '#showGMap5', function () {
+    var options = {
+        enableHighAccuracy: true
+    };
+    navigator.geolocation.getCurrentPosition(function(position){
+        var clientPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        var myOptions = {
+                center: clientPosition,
+                zoom: 13,
+                mapTypeId: "OSM",
+                mapTypeControl: false,
+                streetViewControl: false,
+                mapTypeControlOptions: {
+                    mapTypeIds: [google.maps.MapTypeId.TERRAIN, google.maps.MapTypeId.ROADMAP],
+                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+                }
+        };
+        var map_gpx = new google.maps.Map(document.getElementById('test5'), myOptions);
+        //Define OSM map type pointing at the OpenStreetMap tile server
+        map_gpx.mapTypes.set("OSM", new google.maps.ImageMapType({
+            getTileUrl: function(coord, zoom) {
+                return "http://tile.openstreetmap.org/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
+            },
+            tileSize: new google.maps.Size(256, 256),
+            name: "OpenStreetMap",
+            maxZoom: 18
+        }));
+    }, onError, options);
+
+});
+
+
+
+function showMap5( urlObj, options )
+{
+    var mapName = urlObj.hash.replace( /.*map=/, "" ),
+    mapId = map3Data[ mapName ],
+    pageSelector = urlObj.hash.replace( /\?.*$/, "" );
+    
+    if ( mapId ) {
+
+        $("#gmapHeader5").find("a")
+            .attr("data-iconpos", "notext")
+            .attr("data-role", "button")
+            .attr("data-icon","back")
+            .attr("data-inline","true")
+            .attr("class","ui-btn-left")
+            .attr("href", "#showRides?ride="+mapId.parentRideList);
+        $("#gmapHeader5").trigger("create");
+        $("#gmapHeader6").find("a")
+            .attr("data-iconpos", "notext")
+            .attr("data-role", "button")
+            .attr("data-icon", "search")
+            .attr("data-inline" ,"true")
+            .attr("class","ui-btn-right")
+            .attr("href","javascript:locateCurrentPosition();");
+        $("#gmapHeader6").trigger("create");
+
+        var $page = $( pageSelector ),
+        $header = $page.children( ":jqmData(role=header)" );
+        $header.find( "h1" ).html( mapId.name );
         $page.page();
         options.dataUrl = urlObj.href;
         $.mobile.changePage( $page, options );

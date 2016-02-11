@@ -1,112 +1,316 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="format-detection" content="telephone=no" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densitydpi=medium-dpi, user-scalable=0" />
-    <title>Cycle Atlas</title>
-    <link rel="stylesheet" href="css/jquery.mobile.structure-1.3.2.min.css" />
-    <link rel="stylesheet" href="css/themes/cap_v2.min.css" />
-    <link rel="stylesheet" href="css/index.css" />
-    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
-    <script type="text/javascript" language="JavaScript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript" language="JavaScript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
-    <script type="text/javascript" language="JavaScript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" language="JavaScript" src="js/jquery.mobile-1.3.2.min.js"></script>
-    <script type="text/javascript" language="JavaScript" src="js/sandbox_slider.js"></script>
-    <script type="text/javascript" src="js/jqm-docs.js"></script>
-    <!--script type="text/javascript" src="js/gmap3.js"></script-->
-    <script type="text/javascript" src="js/common.js"></script>
-    <script type="text/javascript" src="js/ui/jquery.ui.map.js"></script>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densitydpi=medium-dpi, user-scalable=0" />
+        <title>Cycle Atlas</title>
+        <link rel="stylesheet" href="css/jquery.mobile.structure-1.3.2.min.css" />
+        <link rel="stylesheet" href="css/themes/cap_v2.min.css" />
+        <link rel="stylesheet" href="css/index.css" />
+        <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+        <script type="text/javascript" language="JavaScript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript" language="JavaScript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+	<script src="js/jquery.min.js"></script>
+    <script>
+        $( document ).bind( 'mobileinit', function(){
+                           $.mobile.loader.prototype.options.text = "loading";
+                           $.mobile.loader.prototype.options.textVisible = false;
+                           $.mobile.loader.prototype.options.theme = "a";
+                           $.mobile.loader.prototype.options.html = "<div class='custom-spinner'></div>";
+                           });	
+    </script>
+	<script src="js/jquery.mobile-1.3.2.min.js"></script>
+	<script src="js/purl.js"></script>
+	<script src="js/data.js"></script>
 
-    <style type="text/css">
-        .ui-icon-custom {
-            background-image: url(img/Locator_24.png) !important;
-            background-size: 24px 24px;
-        }
-        #test1 { height: 100%; width: 100%; }
-        </style>
-</head>
-<body>
-    <div data-role="page" id="inicio" style="background:#000">
-        <div data-role="header" style="font-family:MyriadProBold, AsapBold, Tahoma; width:100%" data-position="fixed">
-            <h1>FIND A RIDE</h1>
-        </div>
-        <div data-role="content">
-            <ul data-role="listview">
-            <li style="font-family:MyriadProCond, AsapBold, Tahoma">
-                <a href="#showRides?ride=lite" data-transition="slide">
-                    <table style="padding:0 0 0 0"><tr><td><img src="img/Lite_icon_77.png" alt="Lite ride" /></td>
-                    <td width="100%"><center>Lite <br />0 - 20 KM</center></td></tr></table>
-                </a>
-            </li>
-            <li style="font-family:MyriadProCond, AsapBold, Tahoma">
-                <a href="#showRides?ride=easy" data-transition="slide">
-                    <table style="padding:0 0 0 0"><tr><td><img src="img/Easy_icon_77.png" alt="Easy ride" /></td>
-                    <td width="100%"><center>Easy <br />20 - 40 KM</center></td></tr></table>
-                </a>
-            </li>
-            <li style="font-family:MyriadProCond, AsapBold, Tahoma">
-                <a href="#showRides?ride=interm" data-transition="slide">
-                    <table style="padding:0 0 0 0"><tr><td><img src="img/Inter_icon_77.png" alt="Intermediate ride" /></td>
-                    <td width="100%"><center>Intermediate <br />40 - 60 KM</center></td></tr></table>
-                </a>
-            </li>
-            <li style="font-family:MyriadProCond, AsapBold, Tahoma">
-                <a href="#showRides?ride=diffi" data-transition="slide">
-                    <table style="padding:0 0 0 0"><tr><td><img src="img/Diff_icon_77.png" alt="Difficult ride" style="float:left" align="middle"/></td>
-                    <td width="100%"><center>Difficult <br />60 - 100 KM</center></td></tr></table>
-                </a>
-            </li>
-            <li style="font-family:MyriadProCond, AsapBold, Tahoma">
-                <a href="#showRides?ride=epic" data-transition="slide">
-                    <table style="padding:0 0 0 0"><tr><td><img src="img/Epic_icon_78.png" alt="Epic ride" style="float:left" align="middle"/></td>
-                    <td width="100%"><center>Epic <br />100+ KM</center></td></tr></table>
-                </a>
-            </li></ul>
-        </div>
-    </div>
+    <style>
+		/*make sure the viewport is 100% height*/
+		html, body {
+		    height : 100%;
+		}
+
+		/*make the page element 100% height*/
+		#pagMapas {
+		    position: absolute;
+		    top		: 0;
+		    right   : 0;
+		    left    : 0;
+		    bottom	: 0;
+		    padding : 0 0 0 0;
+		}
+
+		/*specify a height for the header so we can line-up the elements, the default is 40px*/
+		#pagMapas .ui-header {
+		    height : 40px;
+		}
+
+		/*set the content to be full-width and height except it doesn't overlap the header or footer*/
+		#pagMapas .ui-content {
+		    position : absolute;
+		    top      : 40px;
+		    right    : 0;
+		    bottom   : 35px;
+		    left     : 0;
+			padding  : 0 0 0 0;
+		}
+
+		/*absolutely position the footer to the bottom of the page*/
+		#pagMapas .ui-footer {
+		    position : absolute;
+		    bottom   : 0;
+		    left     : 0;
+		    width    : 100%;
+		    height   : 35px;
+		}​
 
 
-
-    <!-- Show Rides-->
-    <div id="showRides" data-role="page" style="background:#000" class="page-map">
-        <div data-role="header" style="font-family:MyriadProCond, AsapBold, Tahoma" data-position="fixed">
-            <h1>ShowRides</h1>
-        </div>
-        
-        <div data-role="content" style="width:100%; height:100%; padding:0; font-family:MyriadProCond, AsapBold, Tahoma">
-        </div>
-
-    </div>
-
-    <!-- Show Basic Map -->
-    <div id="showMap" data-role="page" style="background:#000" class="page-map">
-        <div data-role="header" style="font-family:MyriadProCond, AsapBold, Tahoma" data-position="fixed">
-            <h1>Basic Map3</h1>
-            <a href="javascript:locateCurrentPosition();" class="ui-btn-right" data-role="button" data-icon="search" data-iconpos="notext" data-inline="true" >search</a>
-        </div>
-        
-        <div data-role="content" style="width:100%; height:420px; padding:0;">
-        </div>
-    </div>
-
-    <!-- Show GMap3 -->
-    <div id="showGMap3" data-role="page" style="background:#000" class="page-map" >
-        <div data-role="header" style="font-family:MyriadProCond, AsapBold, Tahoma" class="ui-icon-alt" data-position="fixed">
-            <div id="gmapHeader1" ><a data-role="button"></a></div>
-            <h1>GMap3</h1>
-            <div id="gmapHeader2" ><a></a></div>
-            <div id="map3"></div>
-        </div>
-        
-        <div data-role="content" style="width:100%; height:100%; padding:0;">
-            <div class="item rounded dark">
-                <div id="test1" class="gmap3" style="width:100%; height:300px"></div>
-            </div>
-        </div>
-    </div>
-
+    /* loader */
+    .ui-loader-default {
+        opacity: 1 !important;
+    }
     
+    .custom-spinner {
+        width: 37px !important;
+        height: 37px !important;
+        background-image:url('http://pictures.reuters.com/ClientFiles/RTR/Images/ajax-loader.gif');
+        display: block;
+    }
+
+
+    </style>
+
+    <script>
+		var map_gpx,
+			centMapa, zoomMapa,
+			myLatlng,
+			myPOI2;
+
+		function initMap() {
+            document.getElementById('map-canvas').html = "";
+            map_gpx = null;
+            var mapOptions = {
+				zoom: zoomMapa,
+				center: centMapa,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			}
+
+			map_gpx = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		};
+
+		function initialize() {
+			var contentString = '<div id="content" style="padding:0 0 0 0"><div id="siteNotice"></div>'+
+			    '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
+			    '<div id="bodyContent"><p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large </p></div></div>';
+
+		
+			var infowindow = new google.maps.InfoWindow({
+			    content: contentString, padding: 0, minWidth:100, maxWidth:100, minHeight:100, minHeight:100
+			});
+
+			var marker = new google.maps.Marker({
+			    position: myLatlng,
+			    map: map_gpx,
+			    title: 'Uluru (Ayers Rock)'
+			});
+			google.maps.event.addListener(marker, 'click', function() {
+			  	//$('#popupPhotoPortrait').popup();
+			  	document.getElementById("mapaPopupImagen").src="images/linux.png";
+			  	$('#popupPhotoPortrait').popup("open");
+				//infowindow.open(map,marker);
+		    });
+
+			marker = new google.maps.Marker({
+			    position: myPOI2,
+			    map: map_gpx,
+			    title: 'POI #2'
+			});
+			google.maps.event.addListener(marker, 'click', function() {
+				document.getElementById("mapaPopupImagen").src="images/vector_tux.864e6cdcc23e.png";
+				$('#popupPhotoPortrait').popup("open");
+			});
+
+		}
+		
+		//google.maps.event.addDomListener(window, 'load', initialize);
+
+
+		$( document ).on( "pageinit", function() {
+		    $( ".photopopup" ).on({
+		        popupbeforeposition: function() {
+		            var maxHeight = $( window ).height() - 60 + "px";
+		            $( ".photopopup img" ).css( "max-height", maxHeight );
+		        }
+		    });
+		});
+
+
+
+		// Listen for any attempts to call changePage(). 
+		$(document).bind( "pagebeforechange", function( e, data ) {
+			// h ttps://github.com/allmarkedup/purl
+			var url;
+			url = $.url(data.toPage);
+			if ($.url(url.attr('fragment')).param()["map"]) {
+				showMap(url, data.options);
+				e.preventDefault();
+			};
+		});
+
+		function showMap( urlPrm, options ) {
+			var mapName = $.url(urlPrm.attr('fragment')).param()["map"],
+				mapId = map3Data[ mapName ],
+				pageSelector = "#"+$.url(urlPrm.attr('fragment')).attr('base');
+			if ( mapId ) {
+				var $page = $( pageSelector ), 
+				$header = $page.children( ":jqmData(role=header)" ), 
+				$content = $page.children( ":jqmData(role=content)" ); 
+				$header.find( "h1" ).html( mapId.name );
+				centMapa = mapId.center;
+                zoomMapa = mapId.zoom;
+				initMap();
+                var newLayer = new google.maps.KmlLayer(
+                    mapId.url,
+                        {suppressInfoWindows: true,
+                        map: map_gpx,
+                        preserveViewport: true}
+                );
+				$page.page();
+				options.dataUrl = urlPrm.attr('source');
+                $.mobile.changePage( $page, options );
+			}
+		}
+
+        $(document).on( "click", ".show-page-loading-msg", function() {
+            var $this = $( this ),
+            theme = $this.jqmData( "theme" ) || $.mobile.loader.prototype.options.theme,
+            msgText = $this.jqmData( "msgtext" ) || $.mobile.loader.prototype.options.text,
+            textVisible = $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
+            textonly = !!$this.jqmData( "textonly" );
+            html = $this.jqmData( "html" ) || "";
+            $.mobile.loading( 'show', {
+                text: msgText,
+                textVisible: textVisible,
+                theme: theme,
+                textonly: textonly,
+                html: html
+            });
+        }).on( "click", ".hide-page-loading-msg", function() {
+            $.mobile.loading( "hide" );
+        });
+
+    </script>
+
+</head>
+
+<body>
+	<!--  Page: Inicio -->
+	<div data-role="page" data-theme="a" id="pagInicio">
+		<div data-role="header" data-position="fixed">
+			<h1>It Worked!</h1>
+			<a href="./index.html" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-left jqm-home">Home</a>
+		</div><!-- /header -->
+
+			<div data-role="content" data-theme="a">
+
+				<ul data-role="listview">
+					<li><a href="#" data-icon="home" class="ui-btn-active" >Home</a></li>
+					<li><a href="#pagMapas?map=li1" data-icon="search">Mapa 1</a></li>
+					<li><a href="#pagMapas?map=li2" class="show-page-loading-msg" data-icon="search">Mapa 2</a></li>
+					<li><a href="#pagAbout" data-icon="info">About</a></li>
+				</ul>
+
+                <button class="show-page-loading-msg" data-theme="a" data-textonly="false" data-textvisible="false" data-msgtext="" data-icon="arrow-r" data-iconpos="right">Default loader</button>
+                <button class="hide-page-loading-msg" data-icon="delete" data-iconpos="right">Hide</button>
+
+				<p>This is content color swatch "A" and a preview of a <a href="#" class="ui-link">link</a>.</p>
+				<label for="slider1">Input slider:</label>
+				<input type="range" name="slider1" id="slider1" value="50" min="0" max="100" data-theme="a" />
+				<fieldset data-role="controlgroup"  data-type="horizontal" data-role="fieldcontain">
+				<legend>Cache settings:</legend>
+				<input type="radio" name="radio-choice-a1" id="radio-choice-a1" value="on" checked="checked" />
+				<label for="radio-choice-a1">On</label>
+				<input type="radio" name="radio-choice-a1" id="radio-choice-b1" value="off"  />
+				<label for="radio-choice-b1">Off</label>
+				</fieldset>
+
+				<p/>
+				<a href="#popupPhotoPortrait0" data-rel="popup" data-position-to="window" data-role="button" data-theme="b" data-inline="true" data-transition="fade">Photo portrait</a>
+				<div data-role="popup" id="popupPhotoPortrait0" class="photopopup" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" >
+					<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a><img src="images/photo-portrait.jpg" alt="Photo portrait">
+				</div>
+
+			</div><!-- /content -->
+
+		<div data-role="footer" data-position="fixed">
+			<div data-role="navbar" data-iconpos="left">
+				<ul>
+					<li><a href="#" data-icon="home" class="ui-btn-active">Home</a></li>
+					<li><a href="#pagMapas?map=li1" data-icon="search">Mapa 1.1</a></li>
+					<li><a href="#pagMapas?map=li2" data-icon="search">Mapa 1.2</a></li>
+					<li><a href="#pagAbout" data-icon="info">About</a></li>
+				</ul>
+			</div><!-- /navbar -->
+		</div><!-- /footer -->
+
+	</div><!-- /page -> Inicio -->
+
+
+	<!-- PAGE: Mapa -->
+	<div data-role="page" data-theme="a" id="pagMapas">
+		<div data-role="header" data-position="fixed">
+			<h1>Map page</h1>
+			<!-- >a data-rel="back" data-icon="back" data-iconpos="notext" data-direction="reverse" class="ui-btn-left jqm-home">Back</a -->
+			<a href="index.html" data-role="button" data-icon="back" data-iconpos="left" data-mini="true" data-inline="true">Back</a>
+		</div><!-- /header -->
+
+			<div data-role="content" data-theme="a" id="contMapa" >
+				<div id="map-canvas" style="width:100%; height:100%; background-color: blue;"></div>
+				<div data-role="popup" id="popupPhotoPortrait" class="photopopup" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" >
+					<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a><img id="mapaPopupImagen" src="images/photo-portrait.jpg" alt="Photo portrait">
+				</div>
+			</div><!-- /content -->
+
+		<div data-role="footer" data-position="fixed">
+			<div data-role="navbar" data-iconpos="left">
+				<ul>
+					<li><a href="#pagInicio" data-icon="home">Home</a></li>
+					<li><a href="#pagMapas" data-icon="search">Mapa 1.1</a></li>
+					<li><a href="#pagMapas?m=1&r=2" data-icon="search">Mapa 1.2</a></li>
+					<li><a href="#pagAbout" data-icon="info">About</a></li>
+				</ul>
+			</div><!-- /navbar -->
+		</div><!-- /footer -->
+
+	</div><!-- /page -> Mapa -->
+
+
+
+	<!-- PAGE: About -->
+	<div data-role="page" data-theme="a" id="pagAbout">
+		<div data-role="header" data-position="fixed">
+			<h1>About page</h1>
+			<a data-rel="back" data-icon="back" data-iconpos="notext" data-direction="reverse" class="ui-btn-left jqm-home">Back</a>
+		</div><!-- /header -->
+
+			<div data-role="content" data-theme="a" id="contAbout" >
+
+			</div><!-- /content -->
+
+		<div data-role="footer" data-position="fixed">
+			<div data-role="navbar" data-iconpos="left">
+				<ul>
+					<li><a href="#pagInicio" data-icon="home">Home</a></li>
+					<li><a href="#pagMapas" data-icon="search">Mapa 1.1</a></li>
+					<li><a href="#pagMapas?m=1&r=2" data-icon="search">Mapa 1.2</a></li>
+					<li><a href="#" data-icon="info" class="ui-btn-active">About</a></li>
+				</ul>
+			</div><!-- /navbar -->
+		</div><!-- /footer -->
+
+	</div><!-- /page -> About -->
+
+
+
 </body>
 </html>

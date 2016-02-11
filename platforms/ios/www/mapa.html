@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densitydpi=medium-dpi, user-scalable=0" />
+        <title>Cycle Atlas</title>
+        <link rel="stylesheet" href="css/jquery.mobile.structure-1.3.2.min.css" />
+        <link rel="stylesheet" href="css/themes/cap_v2.min.css" />
+        <link rel="stylesheet" href="css/index.css" />
+        <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+        <script type="text/javascript" language="JavaScript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript" language="JavaScript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+	<script src="js/jquery.min.js"></script>
+    <script>
+        $( document ).bind( 'mobileinit', function(){
+                           $.mobile.loader.prototype.options.text = "loading";
+                           $.mobile.loader.prototype.options.textVisible = false;
+                           $.mobile.loader.prototype.options.theme = "a";
+                           $.mobile.loader.prototype.options.html = "<div class='custom-spinner'></div>";
+                           });	
+    </script>
+	<script src="js/jquery.mobile-1.3.2.min.js"></script>
+	<script src="js/purl.js"></script>
+	<script src="js/data.js"></script>
+
+    <style>
+		/*make sure the viewport is 100% height*/
+		html, body {
+		    height : 100%;
+		}
+
+		/*make the page element 100% height*/
+		#pagMapas {
+		    position: absolute;
+		    top		: 0;
+		    right   : 0;
+		    left    : 0;
+		    bottom	: 0;
+		    padding : 0 0 0 0;
+		}
+
+		/*specify a height for the header so we can line-up the elements, the default is 40px*/
+		#pagMapas .ui-header {
+		    height : 40px;
+		}
+
+		/*set the content to be full-width and height except it doesn't overlap the header or footer*/
+		#pagMapas .ui-content {
+		    position : absolute;
+		    top      : 40px;
+		    right    : 0;
+		    bottom   : 35px;
+		    left     : 0;
+			padding  : 0 0 0 0;
+		}
+
+		/*absolutely position the footer to the bottom of the page*/
+		#pagMapas .ui-footer {
+		    position : absolute;
+		    bottom   : 0;
+		    left     : 0;
+		    width    : 100%;
+		    height   : 35px;
+		}​
+
+
+    /* loader */
+    .ui-loader-default {
+        opacity: 1 !important;
+    }
+    
+    .custom-spinner {
+        width: 37px !important;
+        height: 37px !important;
+        background-image:url('http://pictures.reuters.com/ClientFiles/RTR/Images/ajax-loader.gif');
+        display: block;
+    }
+
+
+    </style>
+
+    <script>
+		var map_gpx,
+			centMapa,
+			myLatlng,
+			myPOI2;
+
+		function initMap() {
+            map_gpx = null;
+            var mapOptions = {
+				zoom: 12,
+				center: new google.maps.LatLng(-37.76, 144.925),
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			}
+
+			map_gpx = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		};
+
+		function initialize() {
+			var contentString = '<div id="content" style="padding:0 0 0 0"><div id="siteNotice"></div>'+
+			    '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
+			    '<div id="bodyContent"><p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large </p></div></div>';
+
+		
+			var infowindow = new google.maps.InfoWindow({
+			    content: contentString, padding: 0, minWidth:100, maxWidth:100, minHeight:100, minHeight:100
+			});
+
+			var marker = new google.maps.Marker({
+			    position: myLatlng,
+			    map: map_gpx,
+			    title: 'Uluru (Ayers Rock)'
+			});
+			google.maps.event.addListener(marker, 'click', function() {
+			  	//$('#popupPhotoPortrait').popup();
+			  	document.getElementById("mapaPopupImagen").src="images/linux.png";
+			  	$('#popupPhotoPortrait').popup("open");
+				//infowindow.open(map,marker);
+		    });
+
+			marker = new google.maps.Marker({
+			    position: myPOI2,
+			    map: map_gpx,
+			    title: 'POI #2'
+			});
+			google.maps.event.addListener(marker, 'click', function() {
+				document.getElementById("mapaPopupImagen").src="images/vector_tux.864e6cdcc23e.png";
+				$('#popupPhotoPortrait').popup("open");
+			});
+
+		}
+		
+        google.maps.event.addDomListener(window, 'load', initMap);
+
+
+		$( document ).on( "pageinit", function() {
+		    $( ".photopopup" ).on({
+		        popupbeforeposition: function() {
+		            var maxHeight = $( window ).height() - 60 + "px";
+		            $( ".photopopup img" ).css( "max-height", maxHeight );
+		        }
+		    });
+		});
+
+
+
+		// Listen for any attempts to call changePage(). 
+		$(document).bind( "pagebeforechange", function( e, data ) {
+			// h ttps://github.com/allmarkedup/purl
+			var url;
+			url = $.url(data.toPage);
+			if ($.url(url.attr('fragment')).param()["map"]) {
+				showMap(url, data.options);
+				e.preventDefault();
+			};
+		});
+
+		function showMap( urlPrm, options ) {
+			var mapName = $.url(urlPrm.attr('fragment')).param()["map"],
+				mapId = map3Data[ mapName ],
+				pageSelector = "#"+$.url(urlPrm.attr('fragment')).attr('base');
+			if ( mapId ) {
+				var $page = $( pageSelector ), 
+				$header = $page.children( ":jqmData(role=header)" ), 
+				$content = $page.children( ":jqmData(role=content)" ); 
+//				markup = "<div style='padding:0 0 0 0; width:100%; height:400px; background:lightgrey' alt='Loading...'><object type='text/html' data='"+mapId.url+"' style='width:100%; height:100%;' scrolling='no'></object></div>"; 
+//				markup += "<a href='#showRides?ride="+mapId.parentRideList+"' data-transition='fade'><img src='img/"+mapId.icon+"' border='0' style='position:absolute; top:0px; left:10px;' width='50px' height='50px' /></a>"; 
+//				markup += "<img src='img/locator_32.png' onClick='locateCurrentPosition();' border='0' style='position:absolute; top:5px; left:250px;' width='32px' height='32px' />"; 
+				$header.find( "h1" ).html( mapId.name );
+				centMapa = new google.maps.LatLng(-37.76, 144.925);
+				//myLatlng = new google.maps.LatLng(-37.76, 144.8);
+				//myPOI2 = new google.maps.LatLng(-37.76, 144.925);
+				initMap();
+				//initialize();
+                var newLayer = new google.maps.KmlLayer( mapId.url,
+                    {suppressInfoWindows: true,
+                    map: map_gpx,
+                    preserveViewport: true
+                });
+                
+//				$content.html( markup );
+				$page.page(); 
+				options.dataUrl = urlPrm.attr('source');
+                $.mobile.changePage( $page, options );
+			}
+		}
+
+/*
+        $(document).on('pageshow', '#pagMapas', function(){
+            $.mobile.loading( 'show');
+        });
+        $(document).on('pageaftershow', '#pagMapas', function(){
+            $.mobile.loading( 'hide');
+        });
+*/
+
+$(document).on( "click", ".show-page-loading-msg", function() {
+            var $this = $( this ),
+            theme = $this.jqmData( "theme" ) || $.mobile.loader.prototype.options.theme,
+            msgText = $this.jqmData( "msgtext" ) || $.mobile.loader.prototype.options.text,
+            textVisible = $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
+            textonly = !!$this.jqmData( "textonly" );
+            html = $this.jqmData( "html" ) || "";
+            $.mobile.loading( 'show', {
+                text: msgText,
+                textVisible: textVisible,
+                theme: theme,
+                textonly: textonly,
+                html: html
+            });
+        }).on( "click", ".hide-page-loading-msg", function() {
+            $.mobile.loading( "hide" );
+        });
+
+    </script>
+
+</head>
+
+<body>
+	<!--  Page: Inicio -->
+	<div data-role="page" data-theme="a" id="pagMapas">
+		<div data-role="header" data-position="fixed">
+			<h1>Maps</h1>
+			<a href="./index.html" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-left jqm-home">Home</a>
+		</div><!-- /header -->
+
+			<div data-role="content" data-theme="a">
+
+<div id="map-canvas" style="width:100%; height:100%; background-color: blue;"></div>
+<div data-role="popup" id="popupPhotoPortrait" class="photopopup" data-overlay-theme="a" data-corners="false" data-tolerance="30,15" >
+    <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a><img id="mapaPopupImagen" src="images/photo-portrait.jpg" alt="Photo portrait">
+        </div>
+
+
+			</div><!-- /content -->
+
+		<div data-role="footer" data-position="fixed">
+			<div data-role="navbar" data-iconpos="left">
+				<ul>
+					<li><a href="./index.html" data-icon="home">Home</a></li>
+					<li><a href="mapa.html?map=li1" data-icon="search" class="ui-btn-active">Mapa 1.1</a></li>
+					<li><a href="mapa.html?map=li2" data-icon="search">Mapa 1.2</a></li>
+					<li><a href="./index.html#pagAbout" data-icon="info">About</a></li>
+				</ul>
+			</div><!-- /navbar -->
+		</div><!-- /footer -->
+
+	</div><!-- /page -> Inicio -->
+
+
+
+</body>
+</html>
